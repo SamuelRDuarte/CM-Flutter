@@ -25,7 +25,7 @@ class Index extends StatefulWidget {
 }
 
 class I_ndexState extends State<Index> {
-  var playlist = teste() as Playlist;
+  var _playlist = getPlaylist();
 
   @override
   Widget build(BuildContext context) {
@@ -82,167 +82,199 @@ class I_ndexState extends State<Index> {
                         ),
                       ],
                     ))
-                  : Container(
-                      margin: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Ionicons.chevron_down_outline,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(
-                                width: 120,
-                              ),
-                              Column(
-                                children: [
-                                  Text(playlist.name.toString(),
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 14)),
-                                  Text(
-                                    //playlist?.owner.displayName.toString(),
-                                    "Road",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          Container(
-                            height: 220,
-                            width: wid,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              image: DecorationImage(
-                                image: AssetImage("images/eminem.jpeg"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            margin: const EdgeInsets.only(
-                                left: 60, right: 60, top: 30, bottom: 15),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Ionicons.share_social_outline,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              Icon(
-                                Ionicons.ellipsis_vertical_circle_outline,
-                                size: 55,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              Icon(
-                                Ionicons.heart_outline,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(left: 15, right: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Text(
-                                  "1.30",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  "3.21",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(left: 15, right: 15),
-                            child: Row(
-                              children: [
-                                Container(
-                                  color: Colors.white,
-                                  height: 4,
-                                  width: 100,
-                                ),
-                                const CircleAvatar(
-                                  radius: 5,
-                                  backgroundColor: Colors.white,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    color: const Color(0xB9A5A5A5),
-                                    height: 4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 22),
+                  : FutureBuilder<Playlist>(
+                      future: _playlist,
+                      builder: (BuildContext context, AsyncSnapshot<Playlist> snapshot){
+                        List<Widget> children = [];
+                        if (snapshot.hasData){
+                          var namePlaylist = snapshot.data?.name;
+                          var autor = snapshot.data?.owner?.displayName;
+                          var image = snapshot.data?.images?.first.url;
+                          print("IMAGEM ------>"+image.toString());
+                          children = [Container(
+                            margin: const EdgeInsets.all(10),
                             child: Column(
-                              children: const [
-                                Text(
-                                  "Whatever You Like",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 25),
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Ionicons.chevron_down_outline,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(
+                                      width: 120,
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text( namePlaylist.toString(),
+                                            style: TextStyle(
+                                                color: Colors.white, fontSize: 14)),
+                                        Text(
+                                          //playlist?.owner.displayName.toString(),
+                                          autor.toString(),
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 15),
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: 10,
+                                Container(
+                                  height: 220,
+                                  width: wid,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                    image: DecorationImage(
+                                      image: NetworkImage(image.toString()),//AssetImage("images/eminem.jpeg"),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  margin: const EdgeInsets.only(
+                                      left: 60, right: 60, top: 30, bottom: 15),
                                 ),
-                                Text(
-                                  "T.I -Paper Trail",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Ionicons.share_social_outline,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Icon(
+                                      Ionicons.ellipsis_vertical_circle_outline,
+                                      size: 55,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Icon(
+                                      Ionicons.heart_outline,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(left: 15, right: 15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: const [
+                                      Text(
+                                        "1.30",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      Text(
+                                        "3.21",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(left: 15, right: 15),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        color: Colors.white,
+                                        height: 4,
+                                        width: 100,
+                                      ),
+                                      const CircleAvatar(
+                                        radius: 5,
+                                        backgroundColor: Colors.white,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          color: const Color(0xB9A5A5A5),
+                                          height: 4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 22),
+                                  child: Column(
+                                    children: const [
+                                      Text(
+                                        "Whatever You Like",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 25),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "T.I -Paper Trail",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Ionicons.play_skip_back_outline,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Icon(
+                                      Ionicons.play,
+                                      size: 55,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Icon(
+                                      Ionicons.play_skip_forward_outline,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
+                          ),];
+                        }else{
+                          children = const <Widget>[
+                            SizedBox(
+                              child: CircularProgressIndicator(),
+                              width: 30,
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: Text('Awaiting data...'),
+                            )
+                          ];
+                        }
+                        return  Center(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Ionicons.play_skip_back_outline,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              Icon(
-                                Ionicons.play,
-                                size: 55,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              Icon(
-                                Ionicons.play_skip_forward_outline,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                            ],
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: children,
                           ),
-                        ],
-                      ),
-                    ),
+                        );;
+
+
+                      }),
             ],
           ),
         ),
