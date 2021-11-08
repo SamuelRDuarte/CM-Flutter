@@ -2,14 +2,14 @@ import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+class Search1 extends StatefulWidget {
+  const Search1({Key? key}) : super(key: key);
 
   @override
   SearchState createState() => SearchState();
 }
 
-class SearchState extends State<Search> {
+class SearchState extends State<Search1> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +40,7 @@ class SearchState extends State<Search> {
               SizedBox(
                 width: 10,
               ),
-              Icon(Ionicons.mic_outline),
+              Icon(Ionicons.map_outline),
             ],
           ),
         ),
@@ -85,12 +85,12 @@ class SearchState extends State<Search> {
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                   image: DecorationImage(
-                    image: AssetImage(podcast[2]['img']),
+                    image: AssetImage(map[2]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Text(
-                  podcast[2]['title'],
+                  map[2]['title'],
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -111,12 +111,12 @@ class SearchState extends State<Search> {
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                   image: DecorationImage(
-                    image: AssetImage(podcast[3]['img']),
+                    image: AssetImage(map[3]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Text(
-                  podcast[3]['title'],
+                  map[3]['title'],
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -138,12 +138,12 @@ class SearchState extends State<Search> {
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                   image: DecorationImage(
-                    image: AssetImage(podcast[0]['img']),
+                    image: AssetImage(map[0]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Text(
-                  podcast[0]['title'],
+                  map[0]['title'],
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -164,12 +164,12 @@ class SearchState extends State<Search> {
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                   image: DecorationImage(
-                    image: AssetImage(podcast[1]['img']),
+                    image: AssetImage(map[1]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Text(
-                  podcast[1]['title'],
+                  map[1]['title'],
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

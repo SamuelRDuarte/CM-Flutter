@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 var selectedIndex = 3;
 var panelOpen = false;
-var appBarTxt = "Music";
+var appBarTxt = "MusicBuddies";
 
-List podcast = [
+List map = [
   {
     "title" : "podcast chart",
     "img" : "images/eminem.jpeg",

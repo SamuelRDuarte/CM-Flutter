@@ -1,13 +1,15 @@
 import 'dart:ui';
 
-import 'package:deezer_music_clone/Pages/favorite.dart';
+import 'package:deezer_music_clone/Pages/scan.dart';
 import 'package:deezer_music_clone/Pages/index.dart';
-import 'package:deezer_music_clone/Pages/podcast.dart';
+import 'package:deezer_music_clone/Pages/map.dart';
 import 'package:deezer_music_clone/Pages/search.dart';
 import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -34,7 +36,7 @@ class _HomePageState extends State<HomePage> {
                           width: 10,
                         ),
                         Text(
-                          "Music",
+                          "MusicBuddies",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -50,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                               width: 10,
                             ),
                             Text(
-                              "Podcast",
+                              "Map",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -81,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 10,
                                 ),
                                 Text(
-                                  "Favorit",
+                                  "Dates",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -154,12 +156,12 @@ class _HomePageState extends State<HomePage> {
               icon: IconButton(
                 icon: selectedIndex == 1
                     ? const Icon(
-                        Ionicons.mic_outline,
+                        Ionicons.map_outline,
                         color: Colors.red,
                         size: 27,
                       )
                     : const Icon(
-                        Ionicons.mic,
+                        Ionicons.map_outline,
                         color: Colors.black,
                         size: 27,
                       ),
@@ -236,10 +238,10 @@ class _HomePageState extends State<HomePage> {
       body: selectedIndex == 0
           ? const Index()
           : selectedIndex == 1
-              ? const Podcast()
+              ? const Map()
               : selectedIndex == 2
-                  ? const Favorite()
-                  : const Search(),
+                  ? const Scan()
+                  : const Search1(),
       /* 
        WeSlide(
         controller: _controller,
