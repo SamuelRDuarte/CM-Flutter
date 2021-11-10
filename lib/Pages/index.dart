@@ -78,7 +78,7 @@ class I_ndexState extends State<Index> {
                         ),
                         Icon(Ionicons.information_circle_outline),
                         SizedBox(
-                          width: 10,
+                          width: 8,
                         ),
                       ],
                     ))
@@ -92,20 +92,18 @@ class I_ndexState extends State<Index> {
                           var image = snapshot.data?.images?.first.url;
                           print("IMAGEM ------>"+image.toString());
                           children = [Container(
-                            margin: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.all(5),
                             child: Column(
                               children: [
-                                Row(
+                                Stack(
                                   children: [
                                     const Icon(
                                       Ionicons.chevron_down_outline,
                                       size: 30,
                                       color: Colors.white,
                                     ),
-                                    const SizedBox(
-                                      width: 120,
-                                    ),
-                                    Column(
+                                    Center(
+                                      child: Column(
                                       children: [
                                         Text( namePlaylist.toString(),
                                             style: TextStyle(
@@ -117,11 +115,11 @@ class I_ndexState extends State<Index> {
                                               color: Colors.white, fontSize: 15),
                                         ),
                                       ],
-                                    )
+                                    ),)
                                   ],
                                 ),
                                 Container(
-                                  height: 220,
+                                  height: 200,
                                   width: wid,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -143,17 +141,13 @@ class I_ndexState extends State<Index> {
                                       size: 30,
                                       color: Colors.white,
                                     ),
-                                    SizedBox(
-                                      width: 30,
-                                    ),
+
                                     Icon(
                                       Ionicons.ellipsis_vertical_circle_outline,
                                       size: 55,
                                       color: Colors.white,
                                     ),
-                                    SizedBox(
-                                      width: 30,
-                                    ),
+
                                     Icon(
                                       Ionicons.heart_outline,
                                       size: 30,
@@ -176,9 +170,6 @@ class I_ndexState extends State<Index> {
                                       ),
                                     ],
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 12,
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(left: 15, right: 15),
@@ -211,9 +202,7 @@ class I_ndexState extends State<Index> {
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 25),
                                       ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
+
                                       Text(
                                         "T.I -Paper Trail",
                                         style: TextStyle(
@@ -222,7 +211,6 @@ class I_ndexState extends State<Index> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
@@ -254,6 +242,7 @@ class I_ndexState extends State<Index> {
                           ),];
                         }else{
                           children = const <Widget>[
+                            SizedBox(height: 50,),
                             SizedBox(
                               child: CircularProgressIndicator(),
                               width: 30,
@@ -271,7 +260,7 @@ class I_ndexState extends State<Index> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: children,
                           ),
-                        );;
+                        );
 
 
                       }),
@@ -345,16 +334,16 @@ class I_ndexState extends State<Index> {
                     color: Colors.black),
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+            Container(
+              height: 260,
+              // color: Colors.black,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[Container(
+                    child: Column( children: [
                       Container(
                         height: 180,
-                        width: wid,
+                        width: 180,
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -364,11 +353,11 @@ class I_ndexState extends State<Index> {
                           ),
                         ),
                         margin: const EdgeInsets.only(
-                            left: 20, top: 30, bottom: 15),
+                            left: 20, top: 30, bottom: 10),
                       ),
                       Container(
-                          // color: Colors.red,
-                          width: double.infinity,
+                        // color: Colors.red,
+                          width: 180,
                           alignment: Alignment.center,
                           margin: const EdgeInsets.only(left: 24),
                           child: const Text(
@@ -376,60 +365,60 @@ class I_ndexState extends State<Index> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
+                  Container(
+                    child: Column( children: [
                       Container(
                         height: 180,
-                        width: wid,
+                        width: 180,
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                           image: DecorationImage(
-                            image: AssetImage("images/billie.jpeg"),
+                            image: AssetImage("images/eminem.jpeg"),
                             fit: BoxFit.cover,
                           ),
                         ),
                         margin: const EdgeInsets.only(
-                            right: 10, top: 30, bottom: 15),
+                            left: 20, top: 30, bottom: 10),
                       ),
                       Container(
-                          // color: Colors.red,
-                          width: double.infinity,
+                        // color: Colors.red,
+                          width: 180,
                           alignment: Alignment.center,
-                          margin: const EdgeInsets.only(right: 18, left: 4),
+                          margin: const EdgeInsets.only(left: 24),
                           child: const Text(
                               "this is new album from skils and weget ,rbabla "))
                     ],
+                    ),
                   ),
-                )
-              ],
-            ),
-            Container(
-              height: 180,
-              width: 165,
-              margin: const EdgeInsets.only(left: 24, top: 15),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                image: DecorationImage(
-                  image: AssetImage("images/sixnine.jpg"),
-                  fit: BoxFit.cover,
-                ),
+                  Container(
+                    child: Column( children: [
+                      Container(
+                        height: 180,
+                        width: 180,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          image: DecorationImage(
+                            image: AssetImage("images/eminem.jpeg"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        margin: const EdgeInsets.only(
+                            left: 20, top: 30, bottom: 10),
+                      ),
+                      Container(
+                        // color: Colors.red,
+                          width: 180,
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.only(left: 24),
+                          child: const Text(
+                              "this is new album from skils and weget ,rbabla "))
+                    ],
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Container(
-                // color: Colors.red,
-                width: 165,
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(left: 35, top: 5),
-                child: const Text(
-                    "this is new album from skils and weget ,rbabla ")),
-            const SizedBox(
-              height: 300,
             ),
            Container(
             child: Column(
