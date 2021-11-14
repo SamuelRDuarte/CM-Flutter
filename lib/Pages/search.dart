@@ -12,6 +12,7 @@ class Search1 extends StatefulWidget {
 class SearchState extends State<Search1> {
   @override
   Widget build(BuildContext context) {
+    authenticate();
     return Container(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,

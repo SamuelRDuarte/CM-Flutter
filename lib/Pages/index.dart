@@ -26,6 +26,7 @@ class Index extends StatefulWidget {
 
 class I_ndexState extends State<Index> {
   var _playlist = getPlaylist();
+  var _rnbPlaylists = getRnBPlaylists();
 
   @override
   Widget build(BuildContext context) {
@@ -58,30 +59,58 @@ class I_ndexState extends State<Index> {
           child: Column(
             children: [
               panelOpen == false
-                  ? Center(
-                      child: Row(
-                      children: const [
-                        Expanded(
-                          child: ListTile(
-                            isThreeLine: false,
-                            leading: Icon(
-                              Ionicons.play,
-                              size: 35,
+                  ?FutureBuilder<Playlist>(
+                    future: _playlist,
+                    builder: (BuildContext context, AsyncSnapshot<Playlist> snapshot){
+                    List<Widget> children = [];
+                    if(snapshot.hasData){
+                    children = [Center(
+                        child: Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              isThreeLine: false,
+                              leading: Icon(
+                                Ionicons.play,
+                                size: 35,
+                              ),
+                              title: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['name']}"),
+                              subtitle: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['artists'][0]["name"]}"),
                             ),
-                            title: Text("Whatever You Like"),
-                            subtitle: Text("T.I -Paper Trail"),
                           ),
-                        ),
-                        Icon(Ionicons.heart_outline),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Icon(Ionicons.information_circle_outline),
-                        SizedBox(
-                          width: 8,
-                        ),
-                      ],
-                    ))
+                          Icon(Ionicons.heart_outline),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(Ionicons.information_circle_outline),
+                          SizedBox(
+                            width: 8,
+                          ),
+                        ],
+                      ),
+                    )];
+                    }else{
+                        children = const <Widget>[
+                          SizedBox(height: 50,),
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            width: 30,
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting data...'),
+                          )
+                        ];
+                      }
+                    return  Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: children,
+                      ),
+                    );
+                    })
                   : FutureBuilder<Playlist>(
                       future: _playlist,
                       builder: (BuildContext context, AsyncSnapshot<Playlist> snapshot){
@@ -90,7 +119,7 @@ class I_ndexState extends State<Index> {
                           var namePlaylist = snapshot.data?.name;
                           var autor = snapshot.data?.owner?.displayName;
                           var image = snapshot.data?.images?.first.url;
-                          print("IMAGEM ------>"+image.toString());
+                          print( "${snapshot.data?.tracks?.itemsNative?.first['track']['album']['images'][0]['url']}");
                           children = [Container(
                             margin: const EdgeInsets.all(5),
                             child: Column(
@@ -126,7 +155,7 @@ class I_ndexState extends State<Index> {
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                                     image: DecorationImage(
-                                      image: NetworkImage(image.toString()),//AssetImage("images/eminem.jpeg"),
+                                      image: NetworkImage("${snapshot.data?.tracks?.itemsNative?.first['track']['album']['images'][0]['url']}"),//AssetImage("images/eminem.jpeg"),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -196,15 +225,15 @@ class I_ndexState extends State<Index> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 22),
                                   child: Column(
-                                    children: const [
+                                    children: [
                                       Text(
-                                        "Whatever You Like",
+                                        "${snapshot.data?.tracks?.itemsNative?.first['track']['name']}",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 25),
                                       ),
 
                                       Text(
-                                        "T.I -Paper Trail",
+                                        "${snapshot.data?.tracks?.itemsNative?.first['track']['artists'][0]["name"]}",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 18),
                                       ),
@@ -337,87 +366,63 @@ class I_ndexState extends State<Index> {
             Container(
               height: 260,
               // color: Colors.black,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[Container(
-                    child: Column( children: [
-                      Container(
-                        height: 180,
-                        width: 180,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage("images/eminem.jpeg"),
-                            fit: BoxFit.cover,
+              child: FutureBuilder<Map<String,dynamic>>(
+                future: _rnbPlaylists,
+                builder: (BuildContext context, AsyncSnapshot<Map<String,dynamic>> snapshot){
+                  var children;
+                  if(snapshot.hasData){
+                    List<Container> lista = [];
+                    for(var p in snapshot.data!['playlists']['items']){
+                      print("AQUIIIIII-> "+ p['images'].toString());
+                      Container cont = Container(child: Column( children: [
+                          Container(
+                            height: 180,
+                            width: 180,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              image: DecorationImage(
+                                image: NetworkImage(p['images'][0]['url']),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            margin: const EdgeInsets.only(
+                                left: 20, top: 30, bottom: 10),
                           ),
+                          Container(
+                            // color: Colors.red,
+                              width: 180,
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.only(left: 24),
+                              child:  Text(p['name']))
+                        ],
                         ),
-                        margin: const EdgeInsets.only(
-                            left: 20, top: 30, bottom: 10),
-                      ),
-                      Container(
-                        // color: Colors.red,
-                          width: 180,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.only(left: 24),
-                          child: const Text(
-                              "this is new album from skils and weget ,rbabla "))
-                    ],
-                  ),
-                ),
-                  Container(
-                    child: Column( children: [
-                      Container(
-                        height: 180,
-                        width: 180,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage("images/eminem.jpeg"),
-                            fit: BoxFit.cover,
+                      );
+                      lista.add(cont);
+                    }
+                    children = ListView(scrollDirection: Axis.horizontal, children: lista,);
+                  }else{
+                    children = Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:  const <Widget>[
+                          SizedBox(height: 50,),
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            width: 30,
+                            height: 30,
                           ),
-                        ),
-                        margin: const EdgeInsets.only(
-                            left: 20, top: 30, bottom: 10),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting data...'),
+                          )
+                        ],
                       ),
-                      Container(
-                        // color: Colors.red,
-                          width: 180,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.only(left: 24),
-                          child: const Text(
-                              "this is new album from skils and weget ,rbabla "))
-                    ],
-                    ),
-                  ),
-                  Container(
-                    child: Column( children: [
-                      Container(
-                        height: 180,
-                        width: 180,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage("images/eminem.jpeg"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        margin: const EdgeInsets.only(
-                            left: 20, top: 30, bottom: 10),
-                      ),
-                      Container(
-                        // color: Colors.red,
-                          width: 180,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.only(left: 24),
-                          child: const Text(
-                              "this is new album from skils and weget ,rbabla "))
-                    ],
-                    ),
-                  ),
-                ],
+                    );
+                  }
+                  return  children;
+                },
               ),
             ),
            Container(
