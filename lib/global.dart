@@ -4,6 +4,8 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import 'package:spotify_sdk/spotify_sdk.dart';
+
 
 
 var selectedIndex = 3;
@@ -15,26 +17,30 @@ String scopes = "user-read-private user-read-email";
 String auth_url = "https://accounts.spotify.com/api/token";
 String spotifyUrl = "https://api.spotify.com";
 var access_token = "";
+var authenticationToken = "";
 
 void authenticate() async {
   int REQUEST_CODE = 1337;
   String REDIRECT_URI = "com.example.first_app://callback";
-  // var result = await SpotifySdk.connectToSpotifyRemote(clientId: client_id, redirectUrl: "http://localhost:8888/callback/");
-  // print("ENTAO ----> "+result.toString());
+  var result = await SpotifySdk.connectToSpotifyRemote(clientId: client_id, redirectUrl: "spotify-sdk://auth");
+  authenticationToken = await SpotifySdk.getAuthenticationToken(clientId: client_id, redirectUrl: "spotify-sdk://auth", scope: "app-remote-control,user-modify-playback-state,playlist-read-private");
+  print("ENTAO ---->"+authenticationToken);
+  print("OIIIAAA");
   // Present the dialog to the user
-  final result = await FlutterWebAuth.authenticate(
-    url:
-    "https://accounts.spotify.com/authorize?client_id="+client_id+"&redirect_uri=http://localhost:8888/callback/:/&scope=user-read-private%20user-read-email&response_type=token&state=34fFs29kd09",
-    callbackUrlScheme: "com.example.first_app",
-  );
-
+  // "https://accounts.spotify.com/authorize?client_id=1820d0285c9247e5ae4dbc7912bd585b&response_type=token&redirect_uri=spotify-sdk%3A%2F%2Fauth&show_dialog=false&utm_source=spotify-sdk&utm_medium=android-sdk&utm_campaign=android-sdk&scope=user-read-private%20user-read-email ",
+  // final result = await FlutterWebAuth.authenticate(
+  //   url:
+  //   "https://accounts.spotify.com/authorize?client_id="+client_id+"&redirect_uri=spotify-sdk://auth&show_dialog=false&utm_source=spotify-sdk&scope=user-read-private%20user-read-email&response_type=token",
+  //
+  //   callbackUrlScheme: "com.example.first_app/callback/",
+  // );
 // Extract token from resulting url
-  final token = Uri.parse(result);
-  String at = token.fragment;
-  at = "http://website/index.html?$at"; // Just for easy persing
-  var accesstoken = Uri.parse(at).queryParameters['access_token'];
-  print('token');
-  print(accesstoken);
+//   final token = Uri.parse(result);
+//   String at = token.fragment;
+//   at = "http://website/index.html?$at"; // Just for easy persing
+//   var accesstoken = Uri.parse(at).queryParameters['access_token'];
+//   print('token');
+//   print(accesstoken);
 }
 
 void getToken() async{
@@ -79,19 +85,20 @@ Future<Playlist> getPlaylist({String id = "6W6G0AjXgZfiJ5R2W9NEru"}) async{
 
 void getUsersPlaylists({String id = "1197483081"}) async{
   var headers = {
-    'Authorization': 'Bearer '+access_token
+    'Authorization': 'Bearer '+authenticationToken
   };
-  var request = http.Request('GET', Uri.parse('https://api.spotify.com/v1/users/'+id+'/playlists'));
+  var request = http.Request('GET', Uri.parse('https://api.spotify.com/v1/me/playlists'));
 
   request.headers.addAll(headers);
 
   http.StreamedResponse response = await request.send();
-
+  print("AHHHHHHHHHHHHHHHHH");
   if (response.statusCode == 200) {
     var res = await response.stream.bytesToString();
-    //print(res);
+
+    print(res);
     var json = convert.jsonDecode(res) as Map<String,dynamic>;
-    print(json['items'][0]['name'] + json['items'][0]['images'][0]['url']);
+    //print(json['items'][0]['name'] + json['items'][0]['images'][0]['url']);
 
   }
   else {

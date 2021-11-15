@@ -1,3 +1,4 @@
+import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -29,7 +30,7 @@ class _SpotifireState extends State<SpotifirePage> {
 
   Future<void> initPlatformState() async {
     print("INIT PLATFORM STATE");
-    await Spotifire.init(clientid: "Your client id");
+    await Spotifire.init(clientid: client_id);
     //Spotifire.positonStream.listen(print);
     //if (!mounted) return;
 
