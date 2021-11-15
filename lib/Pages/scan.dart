@@ -1,6 +1,15 @@
+import 'package:deezer_music_clone/Pages/spotifire.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify_auth_player/spotify_auth_player.dart';
 
+Future<void> trySpotifire(spotifyUrl) async {
+  await Spotifire.init(clientid: "Your client id");
+  await Spotifire.connectRemote.then(print);
+  await Spotifire.playPlaylist(playlistUri: Spotifire.getSpotifyUri(spotifyUrl));
+}
 
 class Scan extends StatefulWidget {
   const Scan({Key? key}) : super(key: key);
@@ -14,11 +23,19 @@ class _ScanState extends State<Scan> {
   QRViewController? controller;
   Barcode? barcode;
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   void dispose() {
+
     controller?.dispose();
     super.dispose();
   }
+
 
   // @override
   // void reassemble() async{
@@ -36,8 +53,16 @@ class _ScanState extends State<Scan> {
         alignment: Alignment.center,
         children: <Widget>[
           buildQrView(context),
-          Positioned(bottom: 10, child: buildResult()),
           Positioned(top: 10, child: buildControlButtons()),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SpotifirePage(barcode: barcode)),
+              );
+              // Navigate back to first route when tapped.
+            }, child: Text(barcode != null ? 'Play!' : 'Scan a code!', maxLines: 3),
+          )
         ],
       )
     ),
@@ -93,18 +118,16 @@ class _ScanState extends State<Scan> {
   );
 
   Widget buildResult() => Container(
-    padding: EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      color: Colors.white24,
-    ),
-    child: Text(
-      barcode != null ? 'Result : ${barcode!.code}' : 'Scan a code!',
-      maxLines: 3,
-    )
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white24,
+      ),
+      child: Text(
+        barcode != null ? 'Result : ${barcode!.code}' : 'Scan a code!',
+        maxLines: 3,
+      )
   );
-
-
 
   Widget buildQrView(BuildContext context) => QRView(
       key: qrKey,
@@ -120,8 +143,8 @@ class _ScanState extends State<Scan> {
 
   void onQRViewCreated(QRViewController controller){
     setState(() => this.controller = controller);
-
     controller.scannedDataStream.listen((barcode) => setState(() => this.barcode = barcode));
   }
 
 }
+

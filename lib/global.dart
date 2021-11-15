@@ -3,7 +3,7 @@ import 'package:spotify/spotify.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
-import 'auth';
+
 
 
 var selectedIndex = 3;

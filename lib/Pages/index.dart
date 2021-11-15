@@ -1,8 +1,10 @@
 import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:spotify/spotify.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
 var credentials = SpotifyApiCredentials("1820d0285c9247e5ae4dbc7912bd585b", "3145ca9038f4450f89ab55dd7a8ebc08");
@@ -32,6 +34,7 @@ class I_ndexState extends State<Index> {
   Widget build(BuildContext context) {
     var hei = MediaQuery.of(context).size.height;
     var wid = MediaQuery.of(context).size.width;
+    final controller = TextEditingController();
 
     return SlidingUpPanel(
       onPanelOpened: () {
@@ -374,20 +377,35 @@ class I_ndexState extends State<Index> {
                     List<Container> lista = [];
                     for(var p in snapshot.data!['playlists']['items']){
                       print("AQUIIIIII-> "+ p['images'].toString());
-                      Container cont = Container(child: Column( children: [
-                          Container(
-                            height: 180,
-                            width: 180,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(8)),
-                              image: DecorationImage(
-                                image: NetworkImage(p['images'][0]['url']),
-                                fit: BoxFit.cover,
+                      Container cont = Container(
+                        child: Column( children: [
+
+                          InkWell(
+                            child: Container(
+                              height: 180,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                image: DecorationImage(
+                                  image: NetworkImage(p['images'][0]['url']),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
+                              margin: const EdgeInsets.only(
+                                  left: 20, top: 30, bottom: 10),
                             ),
-                            margin: const EdgeInsets.only(
-                                left: 20, top: 30, bottom: 10),
+                            onTap: () {
+                              child: showDialog(
+                                context: context,
+                                builder: (BuildContext context) => Dialog(
+                                  child: QrImage(
+                                    data : p['external_urls']['spotify'],
+                                    backgroundColor: Colors.white,
+                                  )
+                                )
+                              );
+                            },
                           ),
                           Container(
                             // color: Colors.red,

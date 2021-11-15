@@ -12,7 +12,7 @@ class Map extends StatefulWidget {
 
 class _MapState extends State<Map> {
   Completer<GoogleMapController> _controller = Completer();
-  static const LatLng _center = const LatLng(45.521563, -122.677433);
+  static const LatLng _center = const LatLng(40.6412, -8.65362);
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
