@@ -400,7 +400,7 @@ class I_ndexState extends State<Index> {
                                 context: context,
                                 builder: (BuildContext context) => Dialog(
                                   child: QrImage(
-                                    data : p['external_urls']['spotify'],
+                                    data : p['uri'],
                                     backgroundColor: Colors.white,
                                   )
                                 )

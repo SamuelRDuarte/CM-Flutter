@@ -200,7 +200,7 @@ class _SpotifireState extends State<SpotifirePage> {
               try {
                 if (await Spotifire.isRemoteConnected)
                   await Spotifire.playPlaylist(
-                      playlistUri: Spotifire.getSpotifyUri(widget.barcode!.code.toString()));
+                      playlistUri: widget.barcode!.code.toString());
               } catch (e) {
                 print(e);
               }
