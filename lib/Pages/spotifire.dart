@@ -32,12 +32,12 @@ class _SpotifireState extends State<SpotifirePage> {
     print("INIT PLATFORM STATE");
     await Spotifire.init(clientid: client_id);
     //Spotifire.positonStream.listen(print);
-    //if (!mounted) return;
+    if (!mounted) return;
 
     Spotifire.musicStream.listen((music) {
-      print("Music::" + music.runtimeType.toString());
+      //print(music.runtimeType);
 
-      //if (mounted)
+      if (mounted)
         setState(() {
           totaldurationinmilli = music.duration.inMilliseconds;
           print(music.duration);
@@ -192,6 +192,7 @@ class _SpotifireState extends State<SpotifirePage> {
               size: 35,
             ),
             onPressed: () async {
+              //print("AAAAAAA");
               await Spotifire.getAccessToken.then(print);
 
               await Spotifire.connectRemote

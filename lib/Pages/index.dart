@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:spotify/spotify.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:spotify_auth_player/spotify_auth_player.dart';
 
 
 var credentials = SpotifyApiCredentials("1820d0285c9247e5ae4dbc7912bd585b", "3145ca9038f4450f89ab55dd7a8ebc08");
@@ -29,6 +29,53 @@ class Index extends StatefulWidget {
 class I_ndexState extends State<Index> {
   var _playlist = getPlaylist();
   var _rnbPlaylists = getRnBPlaylists();
+  Music? _music;
+  int totaldurationinmilli = 0;
+  bool ispaused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    print("INIT PLATFORM STATE");
+    await Spotifire.init(clientid: client_id);
+    //Spotifire.positonStream.listen(print);
+    if (!mounted) return;
+
+    Spotifire.musicStream.listen((music) {
+      //print(music.runtimeType);
+
+      if (mounted)
+        setState(() {
+          totaldurationinmilli = music.duration.inMilliseconds;
+          print(music.duration);
+          _music = music;
+        });
+    }).onError((error) {
+      print(error);
+    });
+  }
+
+  double val = 0.01;
+
+  double _getValue(int milliseconds) {
+    double percentage = (milliseconds / totaldurationinmilli) * 100;
+
+    print(percentage.toString() + " % ");
+
+    double tpo = (percentage / 100) * 1.0;
+    return tpo;
+  }
+
+  @override
+  void dispose() {
+    Spotifire.close();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +127,6 @@ class I_ndexState extends State<Index> {
                               title: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['name']}"),
                               subtitle: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['artists'][0]["name"]}"),
                             ),
-                          ),
-                          Icon(Ionicons.heart_outline),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Icon(Ionicons.information_circle_outline),
-                          SizedBox(
-                            width: 8,
                           ),
                         ],
                       ),
@@ -165,108 +204,118 @@ class I_ndexState extends State<Index> {
                                   margin: const EdgeInsets.only(
                                       left: 60, right: 60, top: 30, bottom: 15),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Ionicons.share_social_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-
-                                    Icon(
-                                      Ionicons.ellipsis_vertical_circle_outline,
-                                      size: 55,
-                                      color: Colors.white,
-                                    ),
-
-                                    Icon(
-                                      Ionicons.heart_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(left: 15, right: 15),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: const [
-                                      Text(
-                                        "1.30",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Text(
-                                        "3.21",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(left: 15, right: 15),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        color: Colors.white,
-                                        height: 4,
-                                        width: 100,
-                                      ),
-                                      const CircleAvatar(
-                                        radius: 5,
-                                        backgroundColor: Colors.white,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          color: const Color(0xB9A5A5A5),
-                                          height: 4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                StreamBuilder<Duration>(
+                                    stream: Spotifire.positonStream,
+                                    // initialData: Duration.zero,
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData)
+                                        return Slider.adaptive(
+                                          value: 0.0,
+                                          onChanged: (d) {},
+                                        );
+                                      print(snapshot.hasData);
+                                      val = snapshot.hasData
+                                          ? _getValue(snapshot.data!.inMilliseconds)
+                                          : val;
+                                      return Slider.adaptive(
+                                        value: val,
+                                        onChanged: (double cv) async {
+                                          final int skd =
+                                          (totaldurationinmilli * cv).floor();
+                                          final Duration dur = Duration(milliseconds: skd);
+                                          await Spotifire.seekTo(
+                                              seekDuration: dur,
+                                              totalDuration: Duration(
+                                                  milliseconds: totaldurationinmilli));
+                                        },
+                                      );
+                                    }),
                                 Container(
                                   margin: const EdgeInsets.only(top: 22),
                                   child: Column(
-                                    children: [
+                                    children: <Widget>[
+                                      if (_music != null)
+                                        Text(_music != null ? _music!.name : "Loading ... ",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4
+                                                ?.copyWith(color: Colors.white.withOpacity(0.95))),
                                       Text(
-                                        "${snapshot.data?.tracks?.itemsNative?.first['track']['name']}",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 25),
-                                      ),
-
-                                      Text(
-                                        "${snapshot.data?.tracks?.itemsNative?.first['track']['artists'][0]["name"]}",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 18),
+                                        _music != null ? _music!.album : "Loading ... ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline4
+                                            ?.copyWith(color: Colors.white70),
                                       ),
                                     ],
                                   ),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Ionicons.play_skip_back_outline,
-                                      size: 30,
-                                      color: Colors.white,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Ionicons.play_skip_back_outline,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        await Spotifire.skipPrevious;
+                                      },
                                     ),
                                     SizedBox(
                                       width: 30,
                                     ),
-                                    Icon(
-                                      Ionicons.play,
-                                      size: 55,
-                                      color: Colors.white,
-                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Ionicons.play,
+                                        size: 55,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        await Spotifire.resumeMusic
+                                            .whenComplete(() {
+                                          setState(() {
+                                            ispaused = false;
+                                          });
+                                        });
+                                      }),
+                                    //crossFadeState: ispaused
+                                    //? CrossFadeState.showFirst
+                                      //  : CrossFadeState.showSecond,
+                                    //duration: const Duration(milliseconds: 700)),
                                     SizedBox(
                                       width: 30,
                                     ),
-                                    Icon(
-                                      Ionicons.play_skip_forward_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
+                                    IconButton(
+                                        icon: Icon(
+                                          Ionicons.play_skip_forward_outline,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () async {
+                                            await Spotifire.skipNext;
+                                          }),
+                                    FloatingActionButton(
+                                        child: Icon(
+                                          Icons.playlist_play,
+                                          size: 35,
+                                        ),
+                                        onPressed: () async {
+                                          //print("AAAAAAA");
+                                          await Spotifire.getAccessToken.then(print);
+
+                                          await Spotifire.connectRemote
+                                              .then(print)
+                                              .whenComplete(() => print("compl"));
+                                          try {
+                                            if (await Spotifire.isRemoteConnected)
+                                              await Spotifire.playPlaylist(
+                                                  playlistUri: Spotifire.getSpotifyUri("spotify:album:37i9dQZEVXbKyJS56d1pgi"));
+                                          } catch (e) {
+                                            print(e);
+                                          }
+                                        }),
                                   ],
                                 ),
                               ],
@@ -400,7 +449,7 @@ class I_ndexState extends State<Index> {
                                 context: context,
                                 builder: (BuildContext context) => Dialog(
                                   child: QrImage(
-                                    data : p['external_urls']['spotify'],
+                                    data : p['uri'],
                                     backgroundColor: Colors.white,
                                   )
                                 )
