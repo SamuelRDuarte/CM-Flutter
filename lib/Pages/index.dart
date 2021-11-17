@@ -162,6 +162,7 @@ class I_ndexState extends State<Index> {
                           var autor = snapshot.data?.owner?.displayName;
                           var image = snapshot.data?.images?.first.url;
                           print( "${snapshot.data?.tracks?.itemsNative?.first['track']['album']['images'][0]['url']}");
+
                           children = [Container(
                             margin: const EdgeInsets.all(5),
                             child: Column(
@@ -173,15 +174,16 @@ class I_ndexState extends State<Index> {
                                       size: 30,
                                       color: Colors.white,
                                     ),
+
                                     Center(
                                       child: Column(
                                       children: [
-                                        Text( namePlaylist.toString(),
+                                        //if (_music != null)
+                                        Text(_music != null ? _music!.name : "Loading ... ",
                                             style: TextStyle(
                                                 color: Colors.white, fontSize: 14)),
-                                        Text(
-                                          //playlist?.owner.displayName.toString(),
-                                          autor.toString(),
+                                        Text(_music != null ? _music!.album : "Loading ... ",
+                                          //autor.toString(),
                                           style: TextStyle(
                                               color: Colors.white, fontSize: 15),
                                         ),
@@ -230,26 +232,6 @@ class I_ndexState extends State<Index> {
                                         },
                                       );
                                     }),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 22),
-                                  child: Column(
-                                    children: <Widget>[
-                                      if (_music != null)
-                                        Text(_music != null ? _music!.name : "Loading ... ",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline4
-                                                ?.copyWith(color: Colors.white.withOpacity(0.95))),
-                                      Text(
-                                        _music != null ? _music!.album : "Loading ... ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline4
-                                            ?.copyWith(color: Colors.white70),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -266,24 +248,34 @@ class I_ndexState extends State<Index> {
                                     SizedBox(
                                       width: 30,
                                     ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Ionicons.play,
-                                        size: 55,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        await Spotifire.resumeMusic
-                                            .whenComplete(() {
-                                          setState(() {
-                                            ispaused = false;
-                                          });
-                                        });
-                                      }),
-                                    //crossFadeState: ispaused
-                                    //? CrossFadeState.showFirst
-                                      //  : CrossFadeState.showSecond,
-                                    //duration: const Duration(milliseconds: 700)),
+                                    AnimatedCrossFade(
+                                        firstChild: IconButton(
+                                            icon: Icon(
+                                              Icons.play_arrow,
+                                              color: Colors.white,
+                                              size: 40,
+                                            ),
+                                            onPressed: () async {
+                                              await Spotifire.resumeMusic.whenComplete(() {
+                                                setState(() {
+                                                  ispaused = false;
+                                                });
+                                              });
+                                            }),
+                                        secondChild: IconButton(
+                                            icon: Icon(Icons.pause,
+                                                size: 40, color: Colors.white),
+                                            onPressed: () async {
+                                              await Spotifire.pauseMusic.whenComplete(() {
+                                                setState(() {
+                                                  ispaused = true;
+                                                });
+                                              });
+                                            }),
+                                        crossFadeState: ispaused
+                                            ? CrossFadeState.showFirst
+                                            : CrossFadeState.showSecond,
+                                        duration: const Duration(milliseconds: 700)),
                                     SizedBox(
                                       width: 30,
                                     ),
@@ -422,7 +414,7 @@ class I_ndexState extends State<Index> {
                 future: _rnbPlaylists,
                 builder: (BuildContext context, AsyncSnapshot<Map<String,dynamic>> snapshot){
                   var children;
-                  if(snapshot.hasData){
+                  if(snapshot.hasData && (snapshot.data!.keys.first != "a")){
                     List<Container> lista = [];
                     for(var p in snapshot.data!['playlists']['items']){
                       print("AQUIIIIII-> "+ p['images'].toString());

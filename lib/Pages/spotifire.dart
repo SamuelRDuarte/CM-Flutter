@@ -2,8 +2,7 @@ import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-
-import 'package:flutter/services.dart';
+//import 'package:spotify/spotify.dart';
 import 'package:spotify_auth_player/spotify_auth_player.dart';
 
 //void main() => runApp(SpotifirePage());
