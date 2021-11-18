@@ -52,10 +52,11 @@ class _SpotifireState extends State<SpotifirePage> {
   Widget build(BuildContext context) {
     print("barcode: " + widget.barcode!.code.toString());
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black87,
-          title: const Text('Spotifire'),
+          title: const Text('MusicBuddies'),
         ),
         body: Stack(
           children: <Widget>[
@@ -83,13 +84,13 @@ class _SpotifireState extends State<SpotifirePage> {
                     Text(_music != null ? _music!.name : "Loading ... ",
                         style: Theme.of(context)
                             .textTheme
-                            .headline2
+                            .headline4
                             ?.copyWith(color: Colors.white.withOpacity(0.95))),
                     Text(
                       _music != null ? _music!.album : "Loading ... ",
                       style: Theme.of(context)
                           .textTheme
-                          .headline2
+                          .headline4
                           ?.copyWith(color: Colors.white70),
                     ),
                     Padding(

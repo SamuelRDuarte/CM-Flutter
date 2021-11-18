@@ -22,8 +22,8 @@ var authenticationToken = "";
 void authenticate() async {
   int REQUEST_CODE = 1337;
   String REDIRECT_URI = "com.example.first_app://callback";
-  var result = await SpotifySdk.connectToSpotifyRemote(clientId: client_id, redirectUrl: "spotify-sdk://auth");
-  authenticationToken = await SpotifySdk.getAuthenticationToken(clientId: client_id, redirectUrl: "spotify-sdk://auth", scope: "app-remote-control,user-modify-playback-state,playlist-read-private");
+  //var result = await SpotifySdk.connectToSpotifyRemote(clientId: client_id, redirectUrl: "spotify-sdk://auth");
+  authenticationToken = await SpotifySdk.getAuthenticationToken(clientId: client_id, redirectUrl: "spotify-sdk://auth", scope: "app-remote-control,user-modify-playback-state,playlist-read-private,user-library-read,user-read-private,user-read-email");
   print("ENTAO ---->"+authenticationToken);
   print("OIIIAAA");
   // Present the dialog to the user
@@ -83,7 +83,7 @@ Future<Playlist> getPlaylist({String id = "6W6G0AjXgZfiJ5R2W9NEru"}) async{
   return playlist;
 }
 
-void getUsersPlaylists({String id = "1197483081"}) async{
+Future<Map<String,dynamic>> getUsersPlaylists() async{
   var headers = {
     'Authorization': 'Bearer '+authenticationToken
   };
@@ -95,16 +95,41 @@ void getUsersPlaylists({String id = "1197483081"}) async{
   print("AHHHHHHHHHHHHHHHHH");
   if (response.statusCode == 200) {
     var res = await response.stream.bytesToString();
-
     print(res);
     var json = convert.jsonDecode(res) as Map<String,dynamic>;
-    //print(json['items'][0]['name'] + json['items'][0]['images'][0]['url']);
-
+    print(json['items'][0]['name'] + json['items'][0]['images'][0]['url']);
+    return json;
   }
   else {
-  print(response.reasonPhrase);
+    print(response.reasonPhrase);
+    return {"a":'t'};
   }
 
+}
+
+Future<String> userPhoto() async{
+  var headers = {
+    'Authorization': 'Bearer '+authenticationToken
+  };
+  var request = http.Request('GET', Uri.parse('https://api.spotify.com/v1/me'));
+
+  request.headers.addAll(headers);
+
+  http.StreamedResponse response = await request.send();
+  print("USER PHOTOOO: " + response.statusCode.toString());
+  if (response.statusCode == 200) {
+    var res = await response.stream.bytesToString();
+    //print("SASA->"+res);
+    print("FOTO DE PERFIL: ");
+    var json = convert.jsonDecode(res) as Map<String,dynamic>;
+    var url = json['images'][0]['url'];
+    //print(json['playlists']['items'][4]['name'] + json['playlists']['items'][0]['images'][0]['url']);
+    return url;
+  }
+  else {
+    print(response.reasonPhrase);
+    return "";
+  }
 }
 
 Future<Map<String,dynamic>> getRnBPlaylists() async{
@@ -121,6 +146,31 @@ Future<Map<String,dynamic>> getRnBPlaylists() async{
     var res = await response.stream.bytesToString();
     //print("SASA->"+res);
     var json = convert.jsonDecode(res) as Map<String,dynamic>;
+    //print(json['playlists']['items'][4]['name'] + json['playlists']['items'][0]['images'][0]['url']);
+    return json;
+  }
+  else {
+    print(response.reasonPhrase);
+    return {"a":'t'};
+  }
+}
+
+Future<Map<String,dynamic>> getSavedAlbums() async{
+  var headers = {
+    'Authorization': 'Bearer '+authenticationToken
+  };
+  var request = http.Request('GET', Uri.parse('https://api.spotify.com/v1/me/albums?limit=15'));
+
+  request.headers.addAll(headers);
+
+  http.StreamedResponse response = await request.send();
+
+  if (response.statusCode == 200) {
+    var res = await response.stream.bytesToString();
+    //print("SASA->"+res);
+    var json = convert.jsonDecode(res) as Map<String,dynamic>;
+    print("ALBUMS");
+    print(json['items']);
     //print(json['playlists']['items'][4]['name'] + json['playlists']['items'][0]['images'][0]['url']);
     return json;
   }

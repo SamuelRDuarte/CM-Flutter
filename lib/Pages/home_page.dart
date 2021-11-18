@@ -23,15 +23,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var hei = MediaQuery.of(context).size.height;
     var wid = MediaQuery.of(context).size.width;
+    var _url = userPhoto();
+    var placeholder = "https://storage.jewheart.com/content/users/avatars/3746/avatar_3746_500.jpg?1558628223";
     return Scaffold(
       appBar: AppBar(
+          backgroundColor: Colors.green,
         elevation: 0,
         title: Container(
             // color: Colors.red,
             margin: const EdgeInsets.only(top: 10),
             child: Row(
-                children: selectedIndex == 0
-                    ? const [
+              children: [
+                FutureBuilder<String>(
+                    future: _url,
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.data! == "" || !snapshot.hasData) {
+                        return CircleAvatar(
+                            backgroundImage: NetworkImage(placeholder)
+                        );
+                      } else {
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(snapshot.data!),
+                        );
+                      }
+                    }),
+                Row(children: selectedIndex == 0 ? const [
                         SizedBox(
                           width: 10,
                         ),
@@ -68,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 10,
                                 ),
                                 Text(
-                                  "Search",
+                                  "Spotify Connection",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -92,31 +108,10 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   width: 5,
                                 ),
-                              ])),
-        backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Ionicons.notifications_outline,
-                size: 30,
-                color: Colors.black87,
-              )),
-          const SizedBox(
-            width: 2,
-          ),
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Ionicons.settings_outline,
-                size: 24,
-                color: Colors.black87,
-              )),
-          const SizedBox(
-            width: 10,
-          ),
-        ],
-      ),
+                              ]),
+          ]
+        ),
+      )),
       bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false, // <-- HERE
           showUnselectedLabels: false, // <-- AND HERE
@@ -178,7 +173,7 @@ class _HomePageState extends State<HomePage> {
               icon: selectedIndex == 2
                   ? IconButton(
                       icon: const Icon(
-                        Ionicons.heart_outline,
+                        Ionicons.qr_code,
                         color: Colors.red,
                         size: 27,
                       ),
@@ -191,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                     )
                   : IconButton(
                       icon: const Icon(
-                        Ionicons.heart,
+                        Ionicons.qr_code,
                         color: Colors.black,
                         size: 27,
                       ),
@@ -208,7 +203,7 @@ class _HomePageState extends State<HomePage> {
               icon: selectedIndex == 3
                   ? IconButton(
                       icon: const Icon(
-                        Ionicons.search_outline,
+                        Icons.audiotrack,
                         color: Colors.red,
                         size: 27,
                       ),
@@ -221,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                     )
                   : IconButton(
                       icon: const Icon(
-                        Ionicons.search,
+                        Icons.audiotrack,
                         color: Colors.black,
                         size: 27,
                       ),

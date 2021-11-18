@@ -5,7 +5,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:spotify/spotify.dart' hide Image;
 import 'package:spotify_auth_player/spotify_auth_player.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 var credentials = SpotifyApiCredentials("1820d0285c9247e5ae4dbc7912bd585b", "3145ca9038f4450f89ab55dd7a8ebc08");
 var spotify = SpotifyApi(credentials);
@@ -35,6 +36,7 @@ void getConnection() async {
   }
 }
 
+
 class Index extends StatefulWidget {
   const Index({Key? key}) : super(key: key);
 
@@ -45,6 +47,8 @@ class Index extends StatefulWidget {
 class I_ndexState extends State<Index> {
   var _playlist = teste();
   var _rnbPlaylists = getRnBPlaylists();
+  var _userPlaylists = getUsersPlaylists();
+  var _savedAlbums = getSavedAlbums();
   Music? _music;
   int totaldurationinmilli = 0;
   bool ispaused = true;
@@ -322,7 +326,7 @@ class I_ndexState extends State<Index> {
             Container(
               margin: const EdgeInsets.only(top: 15, left: 20),
               child: const Text(
-                "Your friends",
+                "Saved Albums",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -330,49 +334,88 @@ class I_ndexState extends State<Index> {
               ),
             ),
             Container(
-              height: 150,
+              height: 260,
+
               // color: Colors.black,
-              child:
-                  ListView(scrollDirection: Axis.horizontal, children: const [
-                SizedBox(
-                  width: 12,
-                ),
-                CircleAvatar(
-                  radius: 55,
-                  backgroundColor: Colors.red,
-                  backgroundImage: AssetImage("images/billie.jpeg"),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                CircleAvatar(
-                  radius: 55,
-                  backgroundColor: Colors.greenAccent,
-                  backgroundImage: AssetImage("images/eminem.jpeg"),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                CircleAvatar(
-                  radius: 55,
-                  backgroundColor: Colors.indigoAccent,
-                  backgroundImage: AssetImage("images/drake.jpg"),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                CircleAvatar(
-                  radius: 55,
-                  backgroundColor: Colors.amber,
-                  backgroundImage: AssetImage("images/sixnine.jpg"),
-                ),
-              ]),
+              child: FutureBuilder<Map<String,dynamic>>(
+                future: _savedAlbums,
+                builder: (BuildContext context, AsyncSnapshot<Map<String,dynamic>> snapshot){
+                  var children;
+                  if(snapshot.hasData && (snapshot.data!.keys.first != "a")){
+                    List<Container> lista = [];
+                    for(var p in snapshot.data!['items']){
+                      //print("AQUIIIIII-> "+ p['images'].toString());
+                      Container cont = Container(
+                        child: Column( children: [
+
+                          InkWell(
+                            child: Container(
+                              height: 180,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                image: DecorationImage(
+                                  image: NetworkImage(p['album']['images'][0]['url']),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              margin: const EdgeInsets.only(
+                                  left: 20, top: 30, bottom: 10),
+                            ),
+                            onTap: () {
+                              child: showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => Dialog(
+                                      child: QrImage(
+                                        data : p['album']['uri'],
+                                        backgroundColor: Colors.white,
+                                      )
+                                  )
+                              );
+                            },
+                          ),
+                          Container(
+                            // color: Colors.red,
+                              width: 180,
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.only(left: 24),
+                              child:  Text(p['album']['name']))
+                        ],
+                        ),
+                      );
+                      lista.add(cont);
+                    }
+                    children = ListView(scrollDirection: Axis.horizontal, children: lista,);
+                  }else{
+                    children = Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:  const <Widget>[
+                          SizedBox(height: 50,),
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            width: 30,
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting data...'),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                  return  children;
+                },
+              ),
             ),
 
             Container(
               margin: const EdgeInsets.only(top: 15, left: 20),
               child: const Text(
-                "Top Playlists of the Month",
+                "Top R&B Playlists of the Month",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -456,181 +499,101 @@ class I_ndexState extends State<Index> {
                 },
               ),
             ),
-           Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 15, left: 20),
-                  child: const Text(
-                    "Your favorite artists",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
-                Container(
-                    height: 150,
-                    // color: Colors.black,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: map.length,
-                        itemBuilder: (context, i) {
-                          return Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
-                              image: DecorationImage(
-                                image: AssetImage("${map[i]['img']}"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            margin:
-                            const EdgeInsets.only(left: 20, top: 30, bottom: 15),
-                          );
-                        })),
-                Container(
-                  margin: const EdgeInsets.only(top: 15, left: 20),
-                  child: const Text(
-                    "All categorie",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage(map[0]['img']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Text(
-                          map[0]['title'],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                        margin: const EdgeInsets.only(left: 20, top: 30, bottom: 15),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage(map[1]['img']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Text(
-                          map[1]['title'],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                        margin: const EdgeInsets.only(right: 10, top: 30, bottom: 15),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage(map[2]['img']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Text(
-                          map[2]['title'],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                        margin: const EdgeInsets.only(left: 20, top: 30, bottom: 15),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(8)),
-                          image: DecorationImage(
-                            image: AssetImage(map[3]['img']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Text(
-                          map[3]['title'],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                        margin: const EdgeInsets.only(right: 10, top: 30, bottom: 15),
-                      ),
-                    )
-                  ],
-                ),
+            Container(
+              margin: const EdgeInsets.only(top: 15, left: 20),
+              child: const Text(
+                "User Playlists",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+            ),
+            Container(
+              height: 260,
+              // color: Colors.black,
+              child: FutureBuilder<Map<String,dynamic>>(
+                future: _userPlaylists,
+                builder: (BuildContext context, AsyncSnapshot<Map<String,dynamic>> snapshot){
+                  var children;
+                  if(snapshot.hasData && (snapshot.data!.keys.first != "a")){
+                    List<Container> lista = [];
+                    for(var p in snapshot.data!['items']){
+                      //print("AQUIIIIII-> "+ p['images'].toString());
+                      Container cont = Container(
+                        child: Column( children: [
 
-                Container(
-                  decoration: const BoxDecoration(
-                      color: Color(0xFFB6AFAF),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  margin: const EdgeInsets.only(top: 15, left: 100),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  child: const Text(
-                    "View More",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
+                          InkWell(
+                            child: Container(
+                              height: 180,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                image: DecorationImage(
+                                  image: NetworkImage(p['images'][0]['url']),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              margin: const EdgeInsets.only(
+                                  left: 20, top: 30, bottom: 10),
+                            ),
+                            onTap: () {
+                              child: showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => Dialog(
+                                      child: QrImage(
+                                        data : p['uri'],
+                                        backgroundColor: Colors.white,
+                                      )
+                                  )
+                              );
+                            },
+                          ),
+                          Container(
+                            // color: Colors.red,
+                              width: 180,
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.only(left: 24),
+                              child:  Text(p['name']))
+                        ],
+                        ),
+                      );
+                      lista.add(cont);
+                    }
+                    children = ListView(scrollDirection: Axis.horizontal, children: lista,);
+                  }else{
+                    children = Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:  const <Widget>[
+                          SizedBox(height: 50,),
+                          SizedBox(
+                            child: CircularProgressIndicator(),
+                            width: 30,
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting data...'),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                  return  children;
+                },
+              ),
+            ),
+              Container(
+                  color: Colors.white,
+                  height: 300.0,// This is optional
+
+              )
               ],
             ),
           )
-          ],
-        ),
-      ),
-    );
+        );
   }
 }
