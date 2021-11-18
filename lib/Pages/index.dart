@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:spotify/spotify.dart';
+import 'package:spotify/spotify.dart' hide Image;
 import 'package:spotify_auth_player/spotify_auth_player.dart';
 
 
@@ -19,6 +19,22 @@ Future<Playlist> teste() async{
   return playlist;
 }
 
+void getConnection() async {
+  //print("AAAAAAA");
+  await Spotifire.init(clientid: client_id);
+  await Spotifire.getAccessToken.then(print);
+
+  await Spotifire.connectRemote.then(print).whenComplete(() => print("compl"));
+  try {
+    if (await Spotifire.isRemoteConnected) {
+      await Spotifire.playPlaylist(playlistUri: "");
+      await Spotifire.pauseMusic;
+    }
+  } catch (e) {
+    print(e);
+  }
+}
+
 class Index extends StatefulWidget {
   const Index({Key? key}) : super(key: key);
 
@@ -27,33 +43,38 @@ class Index extends StatefulWidget {
 }
 
 class I_ndexState extends State<Index> {
-  var _playlist = getPlaylist();
+  var _playlist = teste();
   var _rnbPlaylists = getRnBPlaylists();
   Music? _music;
   int totaldurationinmilli = 0;
-  bool ispaused = false;
+  bool ispaused = true;
+
+
 
   @override
   void initState() {
     super.initState();
+    getConnection();
     initPlatformState();
   }
 
   Future<void> initPlatformState() async {
     print("INIT PLATFORM STATE");
-    await Spotifire.init(clientid: client_id);
+
     //Spotifire.positonStream.listen(print);
     if (!mounted) return;
 
     Spotifire.musicStream.listen((music) {
       //print(music.runtimeType);
 
-      if (mounted)
+      if (mounted) {
+
         setState(() {
           totaldurationinmilli = music.duration.inMilliseconds;
           print(music.duration);
           _music = music;
         });
+      }
     }).onError((error) {
       print(error);
     });
@@ -82,7 +103,6 @@ class I_ndexState extends State<Index> {
     var hei = MediaQuery.of(context).size.height;
     var wid = MediaQuery.of(context).size.width;
     final controller = TextEditingController();
-
     return SlidingUpPanel(
       onPanelOpened: () {
         setState(() {
@@ -109,12 +129,7 @@ class I_ndexState extends State<Index> {
           child: Column(
             children: [
               panelOpen == false
-                  ?FutureBuilder<Playlist>(
-                    future: _playlist,
-                    builder: (BuildContext context, AsyncSnapshot<Playlist> snapshot){
-                    List<Widget> children = [];
-                    if(snapshot.hasData){
-                    children = [Center(
+                 ?Center(
                         child: Row(
                         children: [
                           Expanded(
@@ -124,219 +139,176 @@ class I_ndexState extends State<Index> {
                                 Ionicons.play,
                                 size: 35,
                               ),
-                              title: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['name']}"),
-                              subtitle: Text("${snapshot.data?.tracks?.itemsNative?.first['track']['artists'][0]["name"]}"),
+                              title: Text(_music != null ? _music!.name : "Loading ... "),
+                              subtitle: Text(_music != null ? _music!.artists.first.name + (_music!.artists.length > 1 ? " feat. " +_music!.artists.sublist(1).map((e) => e.name).join(","): "") : "Loading ... "),
                             ),
                           ),
                         ],
                       ),
-                    )];
-                    }else{
-                        children = const <Widget>[
-                          SizedBox(height: 50,),
-                          SizedBox(
-                            child: CircularProgressIndicator(),
-                            width: 30,
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 16),
-                            child: Text('Awaiting data...'),
-                          )
-                        ];
-                      }
-                    return  Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: children,
-                      ),
-                    );
-                    })
-                  : FutureBuilder<Playlist>(
-                      future: _playlist,
-                      builder: (BuildContext context, AsyncSnapshot<Playlist> snapshot){
-                        List<Widget> children = [];
-                        if (snapshot.hasData){
-                          var namePlaylist = snapshot.data?.name;
-                          var autor = snapshot.data?.owner?.displayName;
-                          var image = snapshot.data?.images?.first.url;
-                          print( "${snapshot.data?.tracks?.itemsNative?.first['track']['album']['images'][0]['url']}");
+                    )
+                  : Container(
+                    margin: const EdgeInsets.all(5),
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            const Icon(
+                              Ionicons.chevron_down_outline,
+                              size: 30,
+                              color: Colors.white,
+                            ),
 
-                          children = [Container(
-                            margin: const EdgeInsets.all(5),
-                            child: Column(
+                            Center(
+                              child: Column(
                               children: [
-                                Stack(
-                                  children: [
-                                    const Icon(
-                                      Ionicons.chevron_down_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-
-                                    Center(
-                                      child: Column(
-                                      children: [
-                                        //if (_music != null)
-                                        Text(_music != null ? _music!.name : "Loading ... ",
-                                            style: TextStyle(
-                                                color: Colors.white, fontSize: 14)),
-                                        Text(_music != null ? _music!.album : "Loading ... ",
-                                          //autor.toString(),
-                                          style: TextStyle(
-                                              color: Colors.white, fontSize: 15),
-                                        ),
-                                      ],
-                                    ),)
-                                  ],
-                                ),
-                                Container(
-                                  height: 200,
-                                  width: wid,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    image: DecorationImage(
-                                      image: NetworkImage("${snapshot.data?.tracks?.itemsNative?.first['track']['album']['images'][0]['url']}"),//AssetImage("images/eminem.jpeg"),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  margin: const EdgeInsets.only(
-                                      left: 60, right: 60, top: 30, bottom: 15),
-                                ),
-                                StreamBuilder<Duration>(
-                                    stream: Spotifire.positonStream,
-                                    // initialData: Duration.zero,
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData)
-                                        return Slider.adaptive(
-                                          value: 0.0,
-                                          onChanged: (d) {},
-                                        );
-                                      print(snapshot.hasData);
-                                      val = snapshot.hasData
-                                          ? _getValue(snapshot.data!.inMilliseconds)
-                                          : val;
-                                      return Slider.adaptive(
-                                        value: val,
-                                        onChanged: (double cv) async {
-                                          final int skd =
-                                          (totaldurationinmilli * cv).floor();
-                                          final Duration dur = Duration(milliseconds: skd);
-                                          await Spotifire.seekTo(
-                                              seekDuration: dur,
-                                              totalDuration: Duration(
-                                                  milliseconds: totaldurationinmilli));
-                                        },
-                                      );
-                                    }),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Ionicons.play_skip_back_outline,
-                                        size: 30,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        await Spotifire.skipPrevious;
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width: 30,
-                                    ),
-                                    AnimatedCrossFade(
-                                        firstChild: IconButton(
-                                            icon: Icon(
-                                              Icons.play_arrow,
-                                              color: Colors.white,
-                                              size: 40,
-                                            ),
-                                            onPressed: () async {
-                                              await Spotifire.resumeMusic.whenComplete(() {
-                                                setState(() {
-                                                  ispaused = false;
-                                                });
-                                              });
-                                            }),
-                                        secondChild: IconButton(
-                                            icon: Icon(Icons.pause,
-                                                size: 40, color: Colors.white),
-                                            onPressed: () async {
-                                              await Spotifire.pauseMusic.whenComplete(() {
-                                                setState(() {
-                                                  ispaused = true;
-                                                });
-                                              });
-                                            }),
-                                        crossFadeState: ispaused
-                                            ? CrossFadeState.showFirst
-                                            : CrossFadeState.showSecond,
-                                        duration: const Duration(milliseconds: 700)),
-                                    SizedBox(
-                                      width: 30,
-                                    ),
-                                    IconButton(
-                                        icon: Icon(
-                                          Ionicons.play_skip_forward_outline,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () async {
-                                            await Spotifire.skipNext;
-                                          }),
-                                    FloatingActionButton(
-                                        child: Icon(
-                                          Icons.playlist_play,
-                                          size: 35,
-                                        ),
-                                        onPressed: () async {
-                                          //print("AAAAAAA");
-                                          await Spotifire.getAccessToken.then(print);
-
-                                          await Spotifire.connectRemote
-                                              .then(print)
-                                              .whenComplete(() => print("compl"));
-                                          try {
-                                            if (await Spotifire.isRemoteConnected)
-                                              await Spotifire.playPlaylist(
-                                                  playlistUri: Spotifire.getSpotifyUri("spotify:album:37i9dQZEVXbKyJS56d1pgi"));
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        }),
-                                  ],
+                                //if (_music != null)
+                                Text(_music != null ? _music!.name : "Loading ... ",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14)),
+                                Text(_music != null ? _music!.album : "Loading ... ",
+                                  //autor.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
                                 ),
                               ],
-                            ),
-                          ),];
-                        }else{
-                          children = const <Widget>[
-                            SizedBox(height: 50,),
-                            SizedBox(
-                              child: CircularProgressIndicator(),
-                              width: 30,
-                              height: 30,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: Text('Awaiting data...'),
-                            )
-                          ];
-                        }
-                        return  Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: children,
+                            ),)
+                          ],
+                        ),
+                        Container(
+                          height: 200,
+                          width: wid,
+                          // decoration: BoxDecoration(
+                          //   color: Colors.white,
+                          //   borderRadius:
+                          //   BorderRadius.all(Radius.circular(8)),
+                          //   image: DecorationImage(
+                          //     image:  AssetImage("images/eminem.jpeg"),//NetworkImage(),
+                          //     fit: BoxFit.cover,
+                          //   ),
+                          // ),
+                          child: Material(
+                              elevation: 7.0,
+                              child: Image.memory(_music!.musicImage)),
+                          margin: const EdgeInsets.only(
+                              left: 60, right: 60, top: 30, bottom: 25),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 300.0),
+                          child: Text(
+                            _music != null
+                                ? _music!.duration.toString().split(".")[0]
+                                : "Loading ... ",
+                            style: TextStyle(color: Colors.white54),
                           ),
-                        );
-
-
-                      }),
+                        ),
+                        StreamBuilder<Duration>(
+                            stream: Spotifire.positonStream,
+                            // initialData: Duration.zero,
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData)
+                                return Slider.adaptive(
+                                  value: 0.0,
+                                  onChanged: (d) {},
+                                );
+                              print(snapshot.hasData);
+                              val = snapshot.hasData
+                                  ? _getValue(snapshot.data!.inMilliseconds)
+                                  : val;
+                              return Slider.adaptive(
+                                value: val,
+                                onChanged: (double cv) async {
+                                  final int skd =
+                                  (totaldurationinmilli * cv).floor();
+                                  final Duration dur = Duration(milliseconds: skd);
+                                  await Spotifire.seekTo(
+                                      seekDuration: dur,
+                                      totalDuration: Duration(
+                                          milliseconds: totaldurationinmilli));
+                                },
+                              );
+                            }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Ionicons.play_skip_back_outline,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                              onPressed: () async {
+                                await Spotifire.skipPrevious;
+                              },
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            AnimatedCrossFade(
+                                firstChild: IconButton(
+                                    icon: Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                    onPressed: () async {
+                                      await Spotifire.resumeMusic.whenComplete(() {
+                                        //initPlatformState();
+                                        setState(() {
+                                          ispaused = false;
+                                        });
+                                      });
+                                    }),
+                                secondChild: IconButton(
+                                    icon: Icon(Icons.pause,
+                                        size: 40, color: Colors.white),
+                                    onPressed: () async {
+                                      await Spotifire.pauseMusic.whenComplete(() {
+                                        setState(() {
+                                          ispaused = true;
+                                        });
+                                      });
+                                    }),
+                                crossFadeState: ispaused
+                                    ? CrossFadeState.showFirst
+                                    : CrossFadeState.showSecond,
+                                duration: const Duration(milliseconds: 700)),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            IconButton(
+                                icon: Icon(
+                                  Ionicons.play_skip_forward_outline,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () async {
+                                    await Spotifire.skipNext;
+                                  }),
+                            // FloatingActionButton(
+                            //     child: Icon(
+                            //       Icons.playlist_play,
+                            //       size: 35,
+                            //     ),
+                            //     onPressed: () async {
+                            //       //print("AAAAAAA");
+                            //       await Spotifire.getAccessToken.then(print);
+                            //
+                            //       await Spotifire.connectRemote
+                            //           .then(print)
+                            //           .whenComplete(() => print("compl"));
+                            //       try {
+                            //         if (await Spotifire.isRemoteConnected)
+                            //           await Spotifire.playPlaylist(
+                            //               playlistUri: Spotifire.getSpotifyUri("spotify:album:37i9dQZEVXbKyJS56d1pgi"));
+                            //       } catch (e) {
+                            //         print(e);
+                            //       }
+                            //     }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
             ],
           ),
         ),
@@ -417,7 +389,7 @@ class I_ndexState extends State<Index> {
                   if(snapshot.hasData && (snapshot.data!.keys.first != "a")){
                     List<Container> lista = [];
                     for(var p in snapshot.data!['playlists']['items']){
-                      print("AQUIIIIII-> "+ p['images'].toString());
+                      //print("AQUIIIIII-> "+ p['images'].toString());
                       Container cont = Container(
                         child: Column( children: [
 

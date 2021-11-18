@@ -119,9 +119,9 @@ Future<Map<String,dynamic>> getRnBPlaylists() async{
 
   if (response.statusCode == 200) {
     var res = await response.stream.bytesToString();
-    print("SASA->"+res);
+    //print("SASA->"+res);
     var json = convert.jsonDecode(res) as Map<String,dynamic>;
-    print(json['playlists']['items'][4]['name'] + json['playlists']['items'][0]['images'][0]['url']);
+    //print(json['playlists']['items'][4]['name'] + json['playlists']['items'][0]['images'][0]['url']);
     return json;
   }
   else {

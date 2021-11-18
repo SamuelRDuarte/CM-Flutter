@@ -96,7 +96,7 @@ class _SpotifireState extends State<SpotifirePage> {
                       padding: const EdgeInsets.only(left: 228.0),
                       child: Text(
                         _music != null
-                            ? _music!.duration.toString()
+                            ? _music!.duration.toString().split(".")[0]
                             : "Loading ... ",
                         style: TextStyle(color: Colors.white54),
                       ),
