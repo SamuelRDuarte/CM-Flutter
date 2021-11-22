@@ -1,5 +1,9 @@
+import 'package:deezer_music_clone/favorite_model.dart';
 import 'package:deezer_music_clone/global.dart';
+import 'package:deezer_music_clone/Pages/favorites.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 //import 'package:spotify/spotify.dart';
@@ -20,6 +24,8 @@ class _SpotifireState extends State<SpotifirePage> {
   Music? _music;
   int totaldurationinmilli = 0;
   bool ispaused = false;
+  bool isFavourite = true;
+
 
   @override
   void initState() {
@@ -30,6 +36,8 @@ class _SpotifireState extends State<SpotifirePage> {
   Future<void> initPlatformState() async {
     print("INIT PLATFORM STATE");
     await Spotifire.init(clientid: client_id);
+
+
     //Spotifire.positonStream.listen(print);
     if (!mounted) return;
 
@@ -47,9 +55,26 @@ class _SpotifireState extends State<SpotifirePage> {
     });
   }
 
+  Future<void> addFavorite(Favorite fav) async {
+    var box = await Hive.openBox<Favorite>('favorites');
+    box.put(fav.name, fav);
+  }
+
+  Future<Favorite?> getFavorite(String fav) async{
+    var box = await Hive.openBox<Favorite>('favorites');
+    return box.get(fav);
+  }
+
+  void deleteFavorite(String key) async{
+    var box = await Hive.openBox<Favorite>('favorites');
+    box.delete(key);
+  }
+
   double val = 0.01;
   @override
   Widget build(BuildContext context) {
+    var date = DateTime.now();
+
     print("barcode: " + widget.barcode!.code.toString());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -135,6 +160,35 @@ class _SpotifireState extends State<SpotifirePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
+                        AnimatedCrossFade(
+                            firstChild: IconButton(
+                                icon: Icon(
+                                  Icons.favorite,
+                                  size: 40,
+                                  color: Colors.white70,
+                                ),
+                                onPressed: () async {
+                                  //TODO
+                                  var fav = Favorite(name: _music!.name, album: _music!.album,date: date);
+                                  addFavorite(fav);
+                                  isFavourite = true;
+                                  print("FAVORITE: " + fav.name);
+                                }),
+                            secondChild: IconButton(
+                                icon: Icon(
+                                  Icons.favorite,
+                                  size: 40,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  //TODO
+                                  deleteFavorite(_music!.name);
+                                  isFavourite = false;
+                                }),
+                            crossFadeState: isFavourite
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                            duration: const Duration(milliseconds: 700)),
                         IconButton(
                             icon: Icon(
                               Icons.skip_previous,

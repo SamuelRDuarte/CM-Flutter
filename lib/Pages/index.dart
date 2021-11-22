@@ -5,8 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:spotify/spotify.dart' hide Image;
 import 'package:spotify_auth_player/spotify_auth_player.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
+
 
 var credentials = SpotifyApiCredentials("1820d0285c9247e5ae4dbc7912bd585b", "3145ca9038f4450f89ab55dd7a8ebc08");
 var spotify = SpotifyApi(credentials);

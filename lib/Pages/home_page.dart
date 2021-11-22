@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:deezer_music_clone/Pages/scan.dart';
 import 'package:deezer_music_clone/Pages/index.dart';
 import 'package:deezer_music_clone/Pages/map.dart';
-import 'package:deezer_music_clone/Pages/search.dart';
+import 'package:deezer_music_clone/Pages/favorites.dart';
 import 'package:deezer_music_clone/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 
   @override
   _HomePageState createState() => _HomePageState();
+
+
 }
 
 class _HomePageState extends State<HomePage> {
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 10,
                                 ),
                                 Text(
-                                  "Spotify Connection",
+                                  "Favorites",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -167,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                   });
                 },
               ),
-              label: "Search",
+              label: "Favorites",
             ),
             BottomNavigationBarItem(
               icon: selectedIndex == 2
@@ -237,74 +239,8 @@ class _HomePageState extends State<HomePage> {
               : selectedIndex == 2
                   ? const Scan()
                   : const Search1(),
-      /* 
-       WeSlide(
-        controller: _controller,
-        panelMinSize: _panelMinSize,
-        panelMaxSize: _panelMaxSize,
-        animateDuration: const Duration(milliseconds: 600),
-        blur: true,
-        panelWidth: wid,
 
-        body: Container(
-          color: _colorScheme.background,
-          child: Center(
-            child: MaterialButton(
-              onPressed: _controller.show,
-              child: const Text("gg"),
-            ),
-          ),
-        ),
-        panel: Container(
-          color: _colorScheme.primary,
-          child: Container(
-              height: 500,
-              width: wid,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 550,
-                    margin: const EdgeInsets.all(12),
-                    color: Colors.amber,
-                  ),
-                  const Text("This is the panel 😊"),
-                ],
-              )),
-        ),
-        panelHeader: Container(
-          height: 110,
-          color: _colorScheme.secondary,
-          child: Center(
-              child: Row(
-            children: const [
-              Expanded(
-                child: ListTile(
-                  isThreeLine: false,
-                  leading: Icon(
-                    Ionicons.play,
-                    size: 35,
-                  ),
-                  title: Text("Whatever You Like"),
-                  subtitle: Text("T.I -Paper Trail"),
-                ),
-              ),
-              Icon(Ionicons.heart_outline),
-              SizedBox(
-                width: 10,
-              ),
-              Icon(Ionicons.information_circle_outline),
-              SizedBox(
-                width: 10,
-              ),
-            ],
-          )),
-        ),
-      ),
-    
-    
-    */
     );
+
   }
 }
