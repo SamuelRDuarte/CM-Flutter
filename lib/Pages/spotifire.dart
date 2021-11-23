@@ -1,6 +1,7 @@
 import 'package:deezer_music_clone/favorite_model.dart';
 import 'package:deezer_music_clone/global.dart';
 import 'package:deezer_music_clone/Pages/favorites.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -41,18 +42,27 @@ class _SpotifireState extends State<SpotifirePage> {
     //Spotifire.positonStream.listen(print);
     if (!mounted) return;
 
-    Spotifire.musicStream.listen((music) {
+    Spotifire.musicStream.listen((music) async {
       //print(music.runtimeType);
 
-      if (mounted)
-        setState(() {
-          totaldurationinmilli = music.duration.inMilliseconds;
-          print(music.duration);
-          _music = music;
-        });
+      if (mounted){
+        isFavourite = await isInFavaorites(music!.name);
+          setState(() {
+            totaldurationinmilli = music.duration.inMilliseconds;
+            print(music.duration);
+            _music = music;
+          });
+
+      };
     }).onError((error) {
       print(error);
     });
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
   }
 
   Future<void> addFavorite(Favorite fav) async {
@@ -65,6 +75,11 @@ class _SpotifireState extends State<SpotifirePage> {
     return box.get(fav);
   }
 
+  Future<bool> isInFavaorites(String music) async{
+    var fav = await getFavorite(music);
+    return fav == null ? false : true;
+  }
+
   void deleteFavorite(String key) async{
     var box = await Hive.openBox<Favorite>('favorites');
     box.delete(key);
@@ -74,7 +89,7 @@ class _SpotifireState extends State<SpotifirePage> {
   @override
   Widget build(BuildContext context) {
     var date = DateTime.now();
-
+    Future.sync(() async => isFavourite = await isInFavaorites(_music!.name));
     print("barcode: " + widget.barcode!.code.toString());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -103,6 +118,7 @@ class _SpotifireState extends State<SpotifirePage> {
                 Column(
                   children: <Widget>[
                     if (_music != null)
+
                       Material(
                           elevation: 7.0,
                           child: Image.memory(_music!.musicImage)),
@@ -137,7 +153,7 @@ class _SpotifireState extends State<SpotifirePage> {
                           if (!snapshot.hasData)
                             return Slider.adaptive(
                               value: 0.0,
-                              onChanged: (d) {},
+                              onChanged: (d) { },
                             );
                           print(snapshot.hasData);
                           val = snapshot.hasData
@@ -165,25 +181,30 @@ class _SpotifireState extends State<SpotifirePage> {
                                 icon: Icon(
                                   Icons.favorite,
                                   size: 40,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  //TODO
+                                  deleteFavorite(_music!.name);
+                                  setState(() {
+                                    isFavourite = false;
+                                  });
+                                }),
+                            secondChild: IconButton(
+                                icon: Icon(
+                                  Icons.favorite,
+                                  size: 40,
                                   color: Colors.white70,
                                 ),
                                 onPressed: () async {
                                   //TODO
                                   var fav = Favorite(name: _music!.name, album: _music!.album,date: date);
                                   addFavorite(fav);
-                                  isFavourite = true;
+                                  setState(() {
+                                    isFavourite = true;
+                                  });
                                   print("FAVORITE: " + fav.name);
-                                }),
-                            secondChild: IconButton(
-                                icon: Icon(
-                                  Icons.favorite,
-                                  size: 40,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () async {
-                                  //TODO
-                                  deleteFavorite(_music!.name);
-                                  isFavourite = false;
+
                                 }),
                             crossFadeState: isFavourite
                                 ? CrossFadeState.showFirst

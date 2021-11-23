@@ -12,6 +12,7 @@ Future<void> main() async {
   Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(FavoriteAdapter());
+  authenticate();
   runApp(const MyApp());
 }
 

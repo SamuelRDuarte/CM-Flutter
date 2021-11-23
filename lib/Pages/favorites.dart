@@ -9,6 +9,7 @@ import '../favorite_model.dart';
 class Search1 extends StatefulWidget {
   const Search1({Key? key}) : super(key: key);
 
+
   @override
   SearchState createState() => SearchState();
 }
@@ -28,18 +29,18 @@ void deleteFavorite(int index) async {
 
 
 class SearchState extends State<Search1> {
-  final _favs = getFavorite();
+  var _favs ;//= getFavorite();
   final GlobalKey<SearchState> key = GlobalKey<SearchState>();
 
   @override
   Widget build(BuildContext context) {
-    authenticate();
+
     int count=0;
     print("FAVS: " + _favs.toString());
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: FutureBuilder<List<Favorite>>(
-        future: _favs,
+        future: _favs = getFavorite(),
         builder: (BuildContext context, AsyncSnapshot<List<Favorite>> snapshot){
           var children;
           for(var f in snapshot.data!) print("FAVS: " + snapshot.data!.length.toString());
@@ -88,8 +89,9 @@ class SearchState extends State<Search1> {
                             ),
                             onPressed: () async {
                               deleteFavorite(snapshot.data!.indexOf(f)); //deleteFavorite
-                              //setState(() {});
-                               //refresh
+                               setState(() {
+
+                               });//refresh
                             }),
                       ),
                     ],
