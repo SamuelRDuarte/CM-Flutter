@@ -1,18 +1,20 @@
 <hr>
 
+<p>Project made in flutter for the course Computação Móvel from Universidade de Aveiro</p>
+
 <table>
 <thead>
 <tr>
 <th align="center">Home screen</th>
 <th align="center">screen</th>
 <th align="center">screen </th>
-  <th align="center">screen </th>
+<th align="center">screen </th>
 
 </tr>
 </thead>
 <tbody>
 
-<p>Project made in flutter for the course Computação Móvel from Universidade de Aveiro</p>
+
 
 <tr>
   
@@ -20,33 +22,41 @@
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/home.jpg">
         <img src="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/home.jpg" alt="Css Logo" with="200" height="400"/>
 
-  </a></td>
+  </a>
+</td>
   
 <td align="center">
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/player_home.jpg">
       <img src="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/player_home.jpg" alt="Css Logo" with="200" height="400"/>
 
-  </a></td>
+  </a>
+</td>
   
   
-  <td align="center">
+<td align="center">
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/map.jpg">
       <img src="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/map.jpg" alt="Css Logo" with="200" height="400"/>
 
-  </a></td>
+  </a>
+</td>
   
   
-  <td align="center">
+<td align="center">
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/player.jpg">
       <img src="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/player.jpg" alt="Css Logo" with="200" height="400"/>
 
-  </a></td>
+  </a>
+</td>
 
-    <td align="center">
+</tr>
+
+<tr>
+
+<td align="center">
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/scan.jpg">
       <img src="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/scan.jpg" alt="Css Logo" with="200" height="400"/>
-
-</a></td>
+    </a>
+</td>
 
 <td align="center">
   <a target="_blank" rel="" href="https://github.com/SamuelRDuarte/CM-Flutter/blob/master/images/fotos%20CM/scan_play.jpg">
