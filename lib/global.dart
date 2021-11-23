@@ -21,7 +21,7 @@ var authenticationToken = "";
 
 void authenticate() async {
   int REQUEST_CODE = 1337;
-  String REDIRECT_URI = "com.example.first_app://callback";
+  String REDIRECT_URI = "com.example.musicBuddies://callback";
   //var result = await SpotifySdk.connectToSpotifyRemote(clientId: client_id, redirectUrl: "spotify-sdk://auth");
   authenticationToken = await SpotifySdk.getAuthenticationToken(clientId: client_id, redirectUrl: "spotify-sdk://auth", scope: "app-remote-control,user-modify-playback-state,playlist-read-private,user-library-read,user-read-private,user-read-email");
   print("ENTAO ---->"+authenticationToken);

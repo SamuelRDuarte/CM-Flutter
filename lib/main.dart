@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:deezer_music_clone/favorite_model.dart';
-import 'package:deezer_music_clone/global.dart';
+import 'package:musicBuddies/favorite_model.dart';
+import 'package:musicBuddies/global.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;

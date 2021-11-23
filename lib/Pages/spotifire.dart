@@ -1,7 +1,6 @@
-import 'package:deezer_music_clone/favorite_model.dart';
-import 'package:deezer_music_clone/global.dart';
-import 'package:deezer_music_clone/Pages/favorites.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:musicBuddies/favorite_model.dart';
+import 'package:musicBuddies/global.dart';
+import 'package:musicBuddies/Pages/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';

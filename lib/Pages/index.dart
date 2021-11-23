@@ -1,4 +1,4 @@
-import 'package:deezer_music_clone/global.dart';
+import 'package:musicBuddies/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:qr_flutter/qr_flutter.dart';

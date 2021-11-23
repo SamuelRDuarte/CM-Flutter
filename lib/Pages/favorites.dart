@@ -1,6 +1,6 @@
-import 'package:deezer_music_clone/global.dart';
+import 'package:musicBuddies/global.dart';
 import 'package:flutter/material.dart';
-import 'package:deezer_music_clone/Pages/home_page.dart';
+import 'package:musicBuddies/Pages/home_page.dart';
 import 'package:hive/hive.dart';
 import 'package:ionicons/ionicons.dart';
 

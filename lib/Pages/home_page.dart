@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:deezer_music_clone/Pages/scan.dart';
-import 'package:deezer_music_clone/Pages/index.dart';
-import 'package:deezer_music_clone/Pages/map.dart';
-import 'package:deezer_music_clone/Pages/favorites.dart';
-import 'package:deezer_music_clone/global.dart';
+import 'package:musicBuddies/Pages/scan.dart';
+import 'package:musicBuddies/Pages/index.dart';
+import 'package:musicBuddies/Pages/map.dart';
+import 'package:musicBuddies/Pages/favorites.dart';
+import 'package:musicBuddies/global.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';

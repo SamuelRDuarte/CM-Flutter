@@ -1,4 +1,4 @@
-import 'package:deezer_music_clone/Pages/spotifire.dart';
+import 'package:musicBuddies/Pages/spotifire.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
